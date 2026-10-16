@@ -22,11 +22,11 @@
       </div>
 
       <nav class="quick-nav" aria-label="Accesos rápidos">
-        <a href="#agenda"><span>📅</span>Agenda</a>
-        <a href="#novedades"><span>🔔</span>Novedades</a>
-        <a href="#bote"><span>💶</span>Bote</a>
-        <a href="#compras"><span>🧾</span>Compras</a>
-        <a href="#justificantes"><span>📎</span>Justificantes</a>
+        <button type="button" data-scroll="agenda"><span>📅</span>Agenda</button>
+        <button type="button" data-scroll="novedades"><span>🔔</span>Novedades</button>
+        <button type="button" data-scroll="bote"><span>💶</span>Bote</button>
+        <button type="button" data-scroll="compras"><span>🧾</span>Compras</button>
+        <button type="button" data-scroll="justificantes"><span>📎</span>Justificantes</button>
       </nav>
 
       <div class="sync-row">
@@ -41,7 +41,6 @@
           <span class="eyebrow">Agenda</span>
           <h2>Próximas fechas</h2>
         </div>
-        <a class="section-anchor" href="#inicio">↑ Arriba</a>
       </div>
       <p class="section-copy">Eventos, fechas límite, pagos y recordatorios importantes.</p>
       <div id="agendaList" class="agenda-grid" aria-live="polite">
@@ -65,28 +64,34 @@
       <div class="section-heading">
         <div>
           <span class="eyebrow">Bote común</span>
-          <h2>Estado económico</h2>
+          <h2>Estado del bote de clase</h2>
         </div>
       </div>
+
+      <p class="section-copy">
+        Cada familia aporta 5 €. Aquí puedes consultar cuánto se ha ingresado, cuánto se ha gastado y qué cantidad queda disponible.
+      </p>
 
       <div class="money-summary">
         <article class="money-card money-card--main">
           <span>Saldo actual</span>
           <strong id="saldoActual">75,00 €</strong>
-          <small>Dinero disponible en este momento</small>
+          <small>Dinero disponible actualmente en el bote</small>
         </article>
         <article class="money-card">
           <span>Total ingresado</span>
           <strong id="totalIngresado">75,00 €</strong>
+          <small>Aportaciones recibidas</small>
         </article>
         <article class="money-card">
           <span>Total gastado</span>
           <strong id="totalGastado">0,00 €</strong>
+          <small>Compras ya pagadas</small>
         </article>
         <article class="money-card money-card--commitment">
-          <span>Saldo tras compromisos</span>
+          <span>Disponible tras compras pendientes</span>
           <strong id="saldoComprometido">44,60 €</strong>
-          <small>Descontando compras previstas o encargadas</small>
+          <small>Saldo que quedaría después de pagar lo ya encargado</small>
         </article>
       </div>
 
@@ -94,15 +99,22 @@
         <div class="family-progress-card__head">
           <div>
             <strong id="familyProgressTitle">15 de 16 familias han aportado</strong>
-            <span>Aportación acordada: <b id="aportacionFamilia">5,00 €</b></span>
+            <span>Aportación acordada por familia: <b id="aportacionFamilia">5,00 €</b></span>
           </div>
           <span id="familyCounter" class="counter-pill">15 / 16</span>
         </div>
-        <div class="progress"><div id="familyProgress" class="progress__bar" style="width:93.75%"></div></div>
-        <div class="mini-stats">
-          <span>Previsto <b id="aportacionPrevista">80,00 €</b></span>
-          <span>Pendientes <b id="familiasPendientes">1</b></span>
+        <div class="progress" aria-label="Progreso de aportaciones">
+          <div id="familyProgress" class="progress__bar" style="width:93.75%"></div>
         </div>
+        <div class="mini-stats">
+          <span>Total previsto: <b id="aportacionPrevista">80,00 €</b></span>
+          <span>Familias pendientes: <b id="familiasPendientes">1</b></span>
+        </div>
+      </div>
+
+      <div class="money-note">
+        <span>ℹ️</span>
+        <p>Las compras encargadas pero todavía no pagadas se muestran aparte. No se contabilizan como gasto real hasta que se abonan.</p>
       </div>
     </section>
 

@@ -34,18 +34,39 @@
     if(t.includes("aviso"))return "notice";
     return "reminder";
   }
+  function agendaIcon(tipo){
+    const t=String(tipo||"").toLowerCase();
+    if(t.includes("evento"))return "🎉";
+    if(t.includes("límite")||t.includes("limite"))return "⏰";
+    if(t.includes("pago"))return "💶";
+    if(t.includes("aviso"))return "🔔";
+    return "📌";
+  }
   function renderAgenda(items){
     const box=$("agendaList"); if(!box)return;
     const visible=(items||[]).filter(i=>!["completado","cancelado"].includes(String(i.estado||"").toLowerCase()));
     if(!visible.length){box.innerHTML='<div class="empty-state">No hay fechas próximas registradas.</div>';return}
     box.innerHTML=visible.map(i=>{
       const cls=agendaClass(i.tipo);
-      const link=i.enlace&&/^https?:\/\//i.test(i.enlace)?`<a class="agenda-link" href="${escapeAttr(i.enlace)}" target="_blank" rel="noopener noreferrer">Abrir enlace</a>`:"";
+      const button=i.enlace&&/^https?:\/\//i.test(i.enlace)
+        ? `<button class="action-button" type="button" data-open-url="${escapeAttr(i.enlace)}">Ver información</button>`:"";
       return `<article class="agenda-card agenda-card--${cls}">
-        <div class="agenda-card__top"><span class="agenda-date">${escapeHtml(i.fecha||"Sin fecha")}</span><span class="when-badge">${relativeDateLabel(i.fecha)}</span></div>
-        <h3>${escapeHtml(i.titulo||"Recordatorio")}</h3>
-        ${i.detalle?`<p>${escapeHtml(i.detalle)}</p>`:""}
-        <div class="agenda-card__footer"><span class="type-badge">${escapeHtml(i.tipo||"Recordatorio")}</span>${i.importe?`<span class="agenda-amount">${escapeHtml(i.importe)}</span>`:""}${link}</div>
+        <div class="agenda-card__stripe"></div>
+        <div class="agenda-card__content">
+          <div class="agenda-card__head">
+            <div class="agenda-icon">${agendaIcon(i.tipo)}</div>
+            <div class="agenda-card__titles">
+              <span class="agenda-type">${escapeHtml(i.tipo||"Recordatorio")}</span>
+              <h3>${escapeHtml(i.titulo||"Recordatorio")}</h3>
+            </div>
+            <div class="agenda-datebox">
+              <strong>${escapeHtml(i.fecha||"Sin fecha")}</strong>
+              <span class="when-badge">${relativeDateLabel(i.fecha)}</span>
+            </div>
+          </div>
+          ${i.detalle?`<div class="agenda-card__body"><p>${escapeHtml(i.detalle)}</p></div>`:""}
+          ${(i.importe||button)?`<div class="agenda-card__footer">${i.importe?`<span class="agenda-amount">${escapeHtml(i.importe)}</span>`:"<span></span>"}${button}</div>`:""}
+        </div>
       </article>`;
     }).join("");
   }
@@ -118,7 +139,7 @@
     const box=$("receiptsList");if(!box)return;
     const docs=(items||[]).filter(i=>/^https?:\/\//i.test(String(i.referencia||"").trim()));
     if(!docs.length){box.innerHTML='<div class="empty-state">Todavía no hay justificantes disponibles.</div>';return}
-    box.innerHTML=docs.map(i=>`<article class="receipt"><div><strong>${escapeHtml(i.concepto||"Compra")}</strong><div class="receipt-meta"><span>${escapeHtml(i.fecha||"")}</span><span>${money.format(Math.abs(Number(i.importe||0)))}</span></div></div><a class="receipt-button" href="${escapeAttr(i.referencia)}" target="_blank" rel="noopener noreferrer">Ver ticket o factura</a></article>`).join("");
+    box.innerHTML=docs.map(i=>`<article class="receipt"><div><strong>${escapeHtml(i.concepto||"Compra")}</strong><div class="receipt-meta"><span>${escapeHtml(i.fecha||"")}</span><span>${money.format(Math.abs(Number(i.importe||0)))}</span></div></div><button class="receipt-button" type="button" data-open-url="${escapeAttr(i.referencia)}">Ver ticket o factura</button></article>`).join("");
   }
   function gviz(sheet){
     return new Promise((resolve,reject)=>{
@@ -164,6 +185,18 @@
       renderAll({summary:extractSummary(s),movimientos:extractMovements(m),agenda:extractAgenda(a),novedades:extractUpdates(n),compras:extractPurchases(c)},true);
     }catch(e){console.warn(e);renderAll(cfg.fallback,false)}
   }
+  document.addEventListener("click",e=>{
+    const scrollBtn=e.target.closest("[data-scroll]");
+    if(scrollBtn){
+      const target=document.getElementById(scrollBtn.dataset.scroll);
+      target?.scrollIntoView({behavior:"smooth",block:"start"});
+      return;
+    }
+    const openBtn=e.target.closest("[data-open-url]");
+    if(openBtn){
+      window.open(openBtn.dataset.openUrl,"_blank","noopener,noreferrer");
+    }
+  });
   $("refreshButton")?.addEventListener("click",load);
   renderAll(cfg.fallback,false);load();
 })();

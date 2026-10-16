@@ -86,3 +86,12 @@ Después haz `Commit changes`. GitHub Pages se actualizará automáticamente.
 ## Privacidad
 
 No incluyas nombres de menores, familias, teléfonos u otros datos personales en las pestañas públicas.
+
+
+## Versión V5
+
+- La agenda utiliza la paleta del logo: verde, turquesa, crema/dorado, coral y gris azulado.
+- Cada tipo de agenda tiene icono, color y bloque visual propio.
+- Los accesos rápidos son botones.
+- Los enlaces externos se presentan como botones de acción.
+- El bloque del bote mantiene una explicación clara de saldo, ingresos, gastos y compras pendientes.
