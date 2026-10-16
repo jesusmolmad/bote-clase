@@ -442,3 +442,69 @@ footer p { margin: 4px 0; }
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
 }
+
+
+.section-copy {
+  margin: -6px 0 16px;
+  color: var(--muted);
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+.receipts-list {
+  display: grid;
+  gap: 12px;
+}
+
+.receipt {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.receipt__info strong {
+  display: block;
+  color: var(--blue-deep);
+}
+
+.receipt__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.receipt__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.receipt__button:hover {
+  background: var(--blue-deep);
+}
+
+@media (max-width: 620px) {
+  .receipt {
+    grid-template-columns: 1fr;
+  }
+
+  .receipt__button {
+    width: 100%;
+  }
+}

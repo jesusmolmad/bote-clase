@@ -43,6 +43,7 @@
     setText("estadoCompra", data.estadoCompra || "Sin compras pendientes");
 
     renderMovements(data.movimientos || []);
+    renderReceipts(data.movimientos || []);
 
     const now = new Date();
     const time = new Intl.DateTimeFormat("es-ES", {
@@ -94,6 +95,53 @@
           </div>
         </article>`;
     }).join("");
+  }
+
+
+  function renderReceipts(items) {
+    const box = $("receiptsList");
+    if (!box) return;
+
+    const receipts = items.filter(item => {
+      const ref = String(item.referencia || "").trim();
+      return ref && /^https?:\/\//i.test(ref);
+    });
+
+    if (!receipts.length) {
+      box.innerHTML = '<div class="empty-state">Todavía no hay justificantes disponibles.</div>';
+      return;
+    }
+
+    box.innerHTML = receipts.map(item => {
+      const isIncome = String(item.tipo || "").toLowerCase().includes("ingreso");
+      const label = isIncome ? "Justificante" : "Ver ticket o factura";
+      const amount = Number(item.importe || 0);
+
+      return `
+        <article class="receipt">
+          <div class="receipt__info">
+            <strong>${escapeHtml(item.concepto || "Compra")}</strong>
+            <div class="receipt__meta">
+              <span>${escapeHtml(item.fecha || "")}</span>
+              <span>${money.format(Math.abs(amount))}</span>
+            </div>
+          </div>
+          <a class="receipt__button"
+             href="${escapeAttribute(item.referencia)}"
+             target="_blank"
+             rel="noopener noreferrer">${label}</a>
+        </article>`;
+    }).join("");
+  }
+
+  function escapeAttribute(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[ch]));
   }
 
   function escapeHtml(value) {
@@ -199,7 +247,8 @@
           concepto: r.c?.[1]?.f ?? r.c?.[1]?.v ?? "",
           tipo: r.c?.[2]?.f ?? r.c?.[2]?.v ?? "",
           importe: Number(r.c?.[3]?.v ?? 0),
-          observaciones: r.c?.[4]?.f ?? r.c?.[4]?.v ?? ""
+          observaciones: r.c?.[4]?.f ?? r.c?.[4]?.v ?? "",
+          referencia: r.c?.[5]?.f ?? r.c?.[5]?.v ?? ""
         };
       })
       .filter(m => m.concepto || m.importe);

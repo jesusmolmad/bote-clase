@@ -122,3 +122,21 @@ Después cambia el bloque de compra pendiente del `Resumen` para indicar que ya 
 ## Privacidad
 
 No publiques nombres de alumnado ni de familias en la pestaña `Movimientos`. La landing está pensada para mostrar importes y conceptos generales, no datos personales.
+
+
+## Tickets y facturas
+
+La landing incluye una sección llamada **Tickets y facturas**.
+
+Para que aparezca un justificante:
+
+1. Sube la foto o PDF del ticket/factura a Google Drive.
+2. En Drive, configura el archivo como **Cualquier persona con el enlace > Lector**.
+3. Copia el enlace.
+4. En la pestaña `Movimientos`, pega ese enlace en la columna **Justificante / referencia** de la fila correspondiente al gasto.
+
+La web detectará automáticamente el enlace y mostrará un botón **Ver ticket o factura**.
+
+Si la celda está vacía, ese movimiento no aparecerá en el apartado de justificantes.
+
+Por privacidad, evita publicar documentos con nombres completos, teléfonos, direcciones, números de cuenta u otros datos personales innecesarios.

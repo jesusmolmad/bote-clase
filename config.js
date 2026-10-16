@@ -25,7 +25,8 @@ window.BOTE_CONFIG = {
         concepto: "Aportaciones de 15 familias",
         tipo: "Ingreso",
         importe: 75,
-        observaciones: "15 de 16 familias han aportado 5 €. Queda 1 familia pendiente."
+        observaciones: "15 de 16 familias han aportado 5 €. Queda 1 familia pendiente.",
+        referencia: ""
       }
     ]
   }
