@@ -157,7 +157,7 @@
       const timer=setTimeout(()=>cleanup(new Error("timeout")),10000);
       function cleanup(err,payload){clearTimeout(timer);delete window[cb];script.remove();err?reject(err):resolve(payload)}
       window[cb]=payload=>cleanup(null,payload);script.onerror=()=>cleanup(new Error("load"));
-      script.src=`https://docs.google.com/spreadsheets/d/${encodeURIComponent(cfg.spreadsheetId)}/gviz/tq?sheet=${encodeURIComponent(sheet)}&tqx=responseHandler:${cb}`;
+      script.src=`https://docs.google.com/spreadsheets/d/${encodeURIComponent(cfg.spreadsheetId)}/gviz/tq?sheet=${encodeURIComponent(sheet)}&headers=1&tqx=responseHandler:${cb}`;
       document.head.appendChild(script);
     });
   }
