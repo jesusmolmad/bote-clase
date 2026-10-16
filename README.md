@@ -140,3 +140,19 @@ La web detectará automáticamente el enlace y mostrará un botón **Ver ticket 
 Si la celda está vacía, ese movimiento no aparecerá en el apartado de justificantes.
 
 Por privacidad, evita publicar documentos con nombres completos, teléfonos, direcciones, números de cuenta u otros datos personales innecesarios.
+
+
+## Agenda
+
+La pestaña `Agenda` alimenta automáticamente el apartado de próximas fechas de la landing.
+
+Columnas:
+- `Fecha`
+- `Tipo`: Evento, Fecha límite, Pago o Recordatorio
+- `Título`
+- `Detalle`
+- `Importe`
+- `Estado`: Pendiente, Próximo, Completado o Cancelado
+- `Enlace`
+
+Los elementos marcados como `Completado` o `Cancelado` dejan de mostrarse en la landing.

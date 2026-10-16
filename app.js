@@ -44,6 +44,7 @@
 
     renderMovements(data.movimientos || []);
     renderReceipts(data.movimientos || []);
+    renderAgenda(data.agenda || []);
 
     const now = new Date();
     const time = new Intl.DateTimeFormat("es-ES", {
@@ -97,6 +98,63 @@
     }).join("");
   }
 
+
+
+  function renderAgenda(items) {
+    const box = $("agendaList");
+    if (!box) return;
+    const visible = (items || []).filter(item => {
+      const estado = String(item.estado || "").toLowerCase();
+      return estado !== "cancelado" && estado !== "completado";
+    });
+    if (!visible.length) {
+      box.innerHTML = '<div class="empty-state">No hay fechas próximas registradas.</div>';
+      return;
+    }
+    function chipClass(tipo) {
+      const t = String(tipo || "").toLowerCase();
+      if (t.includes("pago")) return "payment";
+      if (t.includes("evento")) return "event";
+      if (t.includes("límite") || t.includes("limite")) return "deadline";
+      return "reminder";
+    }
+    box.innerHTML = visible.map(item => {
+      const amount = item.importe ? `<div class="agenda-amount">${escapeHtml(item.importe)}</div>` : '<div></div>';
+      const link = item.enlace && /^https?:\/\//i.test(item.enlace)
+        ? `<a class="agenda-link" href="${escapeAttribute(item.enlace)}" target="_blank" rel="noopener noreferrer">Abrir enlace</a>`
+        : "";
+      return `
+        <article class="agenda-item">
+          <div class="agenda-date">${escapeHtml(item.fecha || "Sin fecha")}</div>
+          <div class="agenda-main">
+            <strong>${escapeHtml(item.titulo || "Recordatorio")}</strong>
+            <div class="agenda-meta">
+              <span class="agenda-chip agenda-chip--${chipClass(item.tipo)}">${escapeHtml(item.tipo || "Recordatorio")}</span>
+              ${item.estado ? `<span class="agenda-chip">${escapeHtml(item.estado)}</span>` : ""}
+            </div>
+            ${item.detalle ? `<p class="agenda-detail">${escapeHtml(item.detalle)}</p>` : ""}
+            ${link}
+          </div>
+          ${amount}
+        </article>`;
+    }).join("");
+  }
+
+  function extractAgenda(payload) {
+    const rows = payload.table.rows || [];
+    return rows
+      .filter(r => r.c?.some(Boolean))
+      .map(r => ({
+        fecha: r.c?.[0]?.f ?? r.c?.[0]?.v ?? "",
+        tipo: r.c?.[1]?.f ?? r.c?.[1]?.v ?? "",
+        titulo: r.c?.[2]?.f ?? r.c?.[2]?.v ?? "",
+        detalle: r.c?.[3]?.f ?? r.c?.[3]?.v ?? "",
+        importe: r.c?.[4]?.f ?? r.c?.[4]?.v ?? "",
+        estado: r.c?.[5]?.f ?? r.c?.[5]?.v ?? "",
+        enlace: r.c?.[6]?.f ?? r.c?.[6]?.v ?? ""
+      }))
+      .filter(a => a.titulo || a.fecha);
+  }
 
   function renderReceipts(items) {
     const box = $("receiptsList");
@@ -258,18 +316,21 @@
     setSync("loading", "Conectando con Google Sheets…");
 
     try {
-      const [summaryPayload, movementsPayload] = await Promise.all([
+      const [summaryPayload, movementsPayload, agendaPayload] = await Promise.all([
         gvizSheet(cfg.resumenSheet),
-        gvizSheet(cfg.movimientosSheet)
+        gvizSheet(cfg.movimientosSheet),
+        gvizSheet(cfg.agendaSheet)
       ]);
 
       const summary = extractSummary(summaryPayload);
       const movimientos = extractMovements(movementsPayload);
+      const agenda = extractAgenda(agendaPayload);
 
       render({
         ...cfg.fallback,
         ...summary,
-        movimientos
+        movimientos,
+        agenda
       }, true);
     } catch (err) {
       console.warn("No se pudo sincronizar con Google Sheets:", err);
