@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#233d73">
+  <meta name="description" content="Estado del bote de clase · Curso 2026/27">
+  <title>Bote de clase · Curso 2026/27</title>
+  <link rel="icon" href="logo.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="site-shell">
+    <header class="hero">
+      <div class="hero__brand">
+        <img src="logo.png" alt="Curso 2026/27 · Información" class="hero__logo">
+        <div>
+          <span class="kicker">Curso 2026/27</span>
+          <h1>Bote de clase</h1>
+          <p>Información actualizada sobre aportaciones, compras y saldo.</p>
+        </div>
+      </div>
+
+      <div class="sync-row">
+        <span id="syncStatus" class="sync-pill sync-pill--loading">
+          <span class="sync-dot"></span>
+          Conectando con Google Sheets…
+        </span>
+        <button id="refreshButton" type="button" class="refresh-button">Actualizar</button>
+      </div>
+    </header>
+
+    <section class="summary-grid" aria-label="Resumen del bote">
+      <article class="metric metric--primary">
+        <span class="metric__label">Saldo actual</span>
+        <strong id="saldoActual" class="metric__value">75,00 €</strong>
+        <span class="metric__hint">Dinero disponible actualmente</span>
+      </article>
+
+      <article class="metric">
+        <span class="metric__label">Total ingresado</span>
+        <strong id="totalIngresado" class="metric__value">75,00 €</strong>
+        <span class="metric__hint">Aportaciones recibidas</span>
+      </article>
+
+      <article class="metric">
+        <span class="metric__label">Total gastado</span>
+        <strong id="totalGastado" class="metric__value">0,00 €</strong>
+        <span class="metric__hint">Pagos ya realizados</span>
+      </article>
+
+      <article class="metric metric--soft">
+        <span class="metric__label">Saldo tras compromisos</span>
+        <strong id="saldoComprometido" class="metric__value">44,60 €</strong>
+        <span class="metric__hint">Descontando compras encargadas</span>
+      </article>
+    </section>
+
+    <section class="panel contribution-panel">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Aportaciones</span>
+          <h2>15 de 16 familias han pagado</h2>
+        </div>
+        <div id="familiasBadge" class="families-badge">15 / 16</div>
+      </div>
+
+      <div class="progress" aria-label="Progreso de aportaciones">
+        <div id="progressBar" class="progress__bar" style="width:93.75%"></div>
+      </div>
+
+      <div class="contribution-stats">
+        <div>
+          <span>Aportación por familia</span>
+          <strong id="aportacionFamilia">5,00 €</strong>
+        </div>
+        <div>
+          <span>Familias pendientes</span>
+          <strong id="familiasPendientes">1</strong>
+        </div>
+        <div>
+          <span>Aportación prevista</span>
+          <strong id="aportacionPrevista">80,00 €</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel purchase-panel">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Compra pendiente</span>
+          <h2 id="compraEncargada">16 bandejas apilables</h2>
+        </div>
+        <span id="estadoCompra" class="status-badge">Encargada · pendiente de pago</span>
+      </div>
+
+      <div class="purchase-grid">
+        <div class="purchase-visual" aria-hidden="true">
+          <div class="tray tray--1"></div>
+          <div class="tray tray--2"></div>
+          <div class="tray tray--3"></div>
+        </div>
+        <div class="purchase-details">
+          <div>
+            <span>Precio por unidad</span>
+            <strong id="precioBandeja">1,90 €</strong>
+          </div>
+          <div>
+            <span>Coste previsto</span>
+            <strong id="costePrevisto">30,40 €</strong>
+          </div>
+          <p>La compra todavía no figura como gasto porque está encargada pero pendiente de pago.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel movements-panel">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Transparencia</span>
+          <h2>Movimientos del bote</h2>
+        </div>
+      </div>
+
+      <div id="movementsList" class="movements-list" aria-live="polite">
+        <article class="movement">
+          <div class="movement__icon movement__icon--income">+</div>
+          <div class="movement__body">
+            <div class="movement__top">
+              <strong>Aportaciones de 15 familias</strong>
+              <span class="movement__amount movement__amount--income">+75,00 €</span>
+            </div>
+            <div class="movement__meta">
+              <span>15/10/2026</span>
+              <span>Ingreso</span>
+            </div>
+            <p>15 de 16 familias han aportado 5 €. Queda 1 familia pendiente.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <p>Esta página es únicamente informativa. La gestión del bote se realiza desde una hoja privada de administración.</p>
+      <p id="lastSync">Datos iniciales cargados.</p>
+    </footer>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
