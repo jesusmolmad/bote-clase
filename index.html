@@ -3,114 +3,119 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#233d73">
-  <meta name="description" content="Estado del bote de clase · Curso 2026/27">
-  <title>Bote de clase · Curso 2026/27</title>
+  <meta name="theme-color" content="#294d8f">
+  <meta name="description" content="Información para las familias de 1.º de Educación Primaria del CEIP Virgen del Castillo · Curso 2026/27">
+  <title>1.º Primaria · CEIP Virgen del Castillo · Curso 2026/27</title>
   <link rel="icon" href="logo.png">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="site-shell">
-    <header class="hero">
-      <div class="hero__brand">
-        <img src="logo.png" alt="Curso 2026/27 · Información" class="hero__logo">
+  <main class="shell">
+    <header class="hero" id="inicio">
+      <div class="hero__top">
+        <img class="hero__logo" src="logo.png" alt="Información · Curso 2026/27">
         <div>
-          <span class="kicker">Curso 2026/27</span>
-          <h1>Bote de clase</h1>
-          <p>Información actualizada sobre aportaciones, compras y saldo.</p>
+          <span class="hero__school">CEIP Virgen del Castillo</span>
+          <h1>1.º de Educación Primaria</h1>
+          <p class="hero__course">Curso 2026/27 · Información para las familias</p>
         </div>
       </div>
 
+      <nav class="quick-nav" aria-label="Accesos rápidos">
+        <a href="#agenda"><span>📅</span>Agenda</a>
+        <a href="#novedades"><span>🔔</span>Novedades</a>
+        <a href="#bote"><span>💶</span>Bote</a>
+        <a href="#compras"><span>🧾</span>Compras</a>
+        <a href="#justificantes"><span>📎</span>Justificantes</a>
+      </nav>
+
       <div class="sync-row">
-        <span id="syncStatus" class="sync-pill sync-pill--loading">
-          <span class="sync-dot"></span>
-          Conectando con Google Sheets…
-        </span>
-        <button id="refreshButton" type="button" class="refresh-button">Actualizar</button>
+        <span id="syncStatus" class="sync-pill sync-pill--loading"><span class="sync-dot"></span>Conectando con Google Sheets…</span>
+        <button id="refreshButton" class="refresh-button" type="button">Actualizar</button>
       </div>
     </header>
 
-    <section class="summary-grid" aria-label="Resumen del bote">
-      <article class="metric metric--primary">
-        <span class="metric__label">Saldo actual</span>
-        <strong id="saldoActual" class="metric__value">75,00 €</strong>
-        <span class="metric__hint">Dinero disponible actualmente</span>
-      </article>
-
-      <article class="metric">
-        <span class="metric__label">Total ingresado</span>
-        <strong id="totalIngresado" class="metric__value">75,00 €</strong>
-        <span class="metric__hint">Aportaciones recibidas</span>
-      </article>
-
-      <article class="metric">
-        <span class="metric__label">Total gastado</span>
-        <strong id="totalGastado" class="metric__value">0,00 €</strong>
-        <span class="metric__hint">Pagos ya realizados</span>
-      </article>
-
-      <article class="metric metric--soft">
-        <span class="metric__label">Saldo tras compromisos</span>
-        <strong id="saldoComprometido" class="metric__value">44,60 €</strong>
-        <span class="metric__hint">Descontando compras encargadas</span>
-      </article>
-    </section>
-
-    <section class="panel contribution-panel">
+    <section class="panel agenda-panel" id="agenda">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">Aportaciones</span>
-          <h2>15 de 16 familias han pagado</h2>
+          <span class="eyebrow">Agenda</span>
+          <h2>Próximas fechas</h2>
         </div>
-        <div id="familiasBadge" class="families-badge">15 / 16</div>
+        <a class="section-anchor" href="#inicio">↑ Arriba</a>
       </div>
-
-      <div class="progress" aria-label="Progreso de aportaciones">
-        <div id="progressBar" class="progress__bar" style="width:93.75%"></div>
-      </div>
-
-      <div class="contribution-stats">
-        <div>
-          <span>Aportación por familia</span>
-          <strong id="aportacionFamilia">5,00 €</strong>
-        </div>
-        <div>
-          <span>Familias pendientes</span>
-          <strong id="familiasPendientes">1</strong>
-        </div>
-        <div>
-          <span>Aportación prevista</span>
-          <strong id="aportacionPrevista">80,00 €</strong>
-        </div>
+      <p class="section-copy">Eventos, fechas límite, pagos y recordatorios importantes.</p>
+      <div id="agendaList" class="agenda-grid" aria-live="polite">
+        <div class="empty-state">Cargando agenda…</div>
       </div>
     </section>
 
-    <section class="panel purchase-panel">
+    <section class="panel updates-panel" id="novedades">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">Compra pendiente</span>
-          <h2 id="compraEncargada">16 bandejas apilables</h2>
+          <span class="eyebrow">Últimos cambios</span>
+          <h2>Novedades</h2>
         </div>
-        <span id="estadoCompra" class="status-badge">Encargada · pendiente de pago</span>
+      </div>
+      <div id="updatesList" class="updates-list" aria-live="polite">
+        <div class="empty-state">Cargando novedades…</div>
+      </div>
+    </section>
+
+    <section class="panel money-panel" id="bote">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Bote común</span>
+          <h2>Estado económico</h2>
+        </div>
       </div>
 
-      <div class="purchase-grid">
-        <div class="purchase-visual" aria-hidden="true">
-          <div class="tray tray--1"></div>
-          <div class="tray tray--2"></div>
-          <div class="tray tray--3"></div>
-        </div>
-        <div class="purchase-details">
+      <div class="money-summary">
+        <article class="money-card money-card--main">
+          <span>Saldo actual</span>
+          <strong id="saldoActual">75,00 €</strong>
+          <small>Dinero disponible en este momento</small>
+        </article>
+        <article class="money-card">
+          <span>Total ingresado</span>
+          <strong id="totalIngresado">75,00 €</strong>
+        </article>
+        <article class="money-card">
+          <span>Total gastado</span>
+          <strong id="totalGastado">0,00 €</strong>
+        </article>
+        <article class="money-card money-card--commitment">
+          <span>Saldo tras compromisos</span>
+          <strong id="saldoComprometido">44,60 €</strong>
+          <small>Descontando compras previstas o encargadas</small>
+        </article>
+      </div>
+
+      <div class="family-progress-card">
+        <div class="family-progress-card__head">
           <div>
-            <span>Precio por unidad</span>
-            <strong id="precioBandeja">1,90 €</strong>
+            <strong id="familyProgressTitle">15 de 16 familias han aportado</strong>
+            <span>Aportación acordada: <b id="aportacionFamilia">5,00 €</b></span>
           </div>
-          <div>
-            <span>Coste previsto</span>
-            <strong id="costePrevisto">30,40 €</strong>
-          </div>
-          <p>La compra todavía no figura como gasto porque está encargada pero pendiente de pago.</p>
+          <span id="familyCounter" class="counter-pill">15 / 16</span>
         </div>
+        <div class="progress"><div id="familyProgress" class="progress__bar" style="width:93.75%"></div></div>
+        <div class="mini-stats">
+          <span>Previsto <b id="aportacionPrevista">80,00 €</b></span>
+          <span>Pendientes <b id="familiasPendientes">1</b></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel purchases-panel" id="compras">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Compras y previsiones</span>
+          <h2>Gastos previstos</h2>
+        </div>
+      </div>
+      <p class="section-copy">Aquí aparecen las compras previstas o encargadas. Cuando se pagan, pasan al historial de movimientos.</p>
+      <div id="purchasesList" class="purchases-list" aria-live="polite">
+        <div class="empty-state">Cargando compras…</div>
       </div>
     </section>
 
@@ -121,62 +126,43 @@
           <h2>Movimientos del bote</h2>
         </div>
       </div>
-
       <div id="movementsList" class="movements-list" aria-live="polite">
-        <article class="movement">
-          <div class="movement__icon movement__icon--income">+</div>
-          <div class="movement__body">
-            <div class="movement__top">
-              <strong>Aportaciones de 15 familias</strong>
-              <span class="movement__amount movement__amount--income">+75,00 €</span>
-            </div>
-            <div class="movement__meta">
-              <span>15/10/2026</span>
-              <span>Ingreso</span>
-            </div>
-            <p>15 de 16 familias han aportado 5 €. Queda 1 familia pendiente.</p>
-          </div>
-        </article>
+        <div class="empty-state">Cargando movimientos…</div>
       </div>
     </section>
 
-
-    <section class="panel agenda-panel">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow">Agenda</span>
-          <h2>Próximas fechas</h2>
-        </div>
-      </div>
-      <p class="section-copy">Fechas límite, pagos, recordatorios y actividades importantes de clase.</p>
-      <div id="agendaList" class="agenda-list" aria-live="polite">
-        <div class="empty-state">No hay fechas próximas registradas.</div>
-      </div>
-    </section>
-
-    <section class="panel receipts-panel">
+    <section class="panel receipts-panel" id="justificantes">
       <div class="section-heading">
         <div>
           <span class="eyebrow">Documentación</span>
           <h2>Tickets y facturas</h2>
         </div>
       </div>
-
-      <p class="section-copy">
-        Aquí puedes consultar los justificantes de las compras realizadas con el bote de clase.
-      </p>
-
+      <p class="section-copy">Los justificantes aparecen automáticamente cuando un gasto tiene un enlace asociado.</p>
       <div id="receiptsList" class="receipts-list" aria-live="polite">
         <div class="empty-state">Todavía no hay justificantes disponibles.</div>
       </div>
     </section>
 
+    <section class="panel info-panel">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Información útil</span>
+          <h2>Sobre este canal</h2>
+        </div>
+      </div>
+      <div class="info-grid">
+        <article><span>📢</span><div><strong>Grupo informativo</strong><p>El grupo se utiliza para trasladar avisos e información del aula.</p></div></article>
+        <article><span>💬</span><div><strong>Consultas individuales</strong><p>Las dudas relacionadas con cada alumno o alumna deben dirigirse a la tutora mediante iPasen.</p></div></article>
+        <article><span>🏫</span><div><strong>Centro</strong><p>CEIP Virgen del Castillo · 1.º de Educación Primaria · Curso 2026/27.</p></div></article>
+      </div>
+    </section>
+
     <footer>
-      <p>Esta página es únicamente informativa. La gestión del bote se realiza desde una hoja privada de administración.</p>
+      <p>Información de consulta para las familias de 1.º de Educación Primaria.</p>
       <p id="lastSync">Datos iniciales cargados.</p>
     </footer>
   </main>
-
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
