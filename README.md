@@ -95,3 +95,13 @@ No incluyas nombres de menores, familias, teléfonos u otros datos personales en
 - Los accesos rápidos son botones.
 - Los enlaces externos se presentan como botones de acción.
 - El bloque del bote mantiene una explicación clara de saldo, ingresos, gastos y compras pendientes.
+
+
+## Versión V6
+
+- Se elimina el bloque separado de Novedades.
+- La Agenda pasa a ser el bloque principal.
+- Los elementos se ordenan automáticamente desde la fecha más cercana a la más lejana.
+- La fecha es el elemento visual más destacado.
+- La pestaña Agenda incorpora `Acción principal`, para resaltar exactamente qué hay que hacer: firmar, pagar, llevar material, confirmar asistencia, etc.
+- Los elementos sin fecha concreta aparecen al final.

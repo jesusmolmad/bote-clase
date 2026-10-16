@@ -23,7 +23,6 @@
 
       <nav class="quick-nav" aria-label="Accesos rápidos">
         <button type="button" data-scroll="agenda"><span>📅</span>Agenda</button>
-        <button type="button" data-scroll="novedades"><span>🔔</span>Novedades</button>
         <button type="button" data-scroll="bote"><span>💶</span>Bote</button>
         <button type="button" data-scroll="compras"><span>🧾</span>Compras</button>
         <button type="button" data-scroll="justificantes"><span>📎</span>Justificantes</button>
@@ -38,27 +37,16 @@
     <section class="panel agenda-panel" id="agenda">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">Agenda</span>
-          <h2>Próximas fechas</h2>
+          <span class="eyebrow">Lo próximo</span>
+          <h2>Agenda del aula</h2>
         </div>
       </div>
-      <p class="section-copy">Eventos, fechas límite, pagos y recordatorios importantes.</p>
+      <p class="section-copy">Ordenada de la fecha más próxima a la más lejana. Lo importante aparece destacado en cada tarjeta.</p>
       <div id="agendaList" class="agenda-grid" aria-live="polite">
         <div class="empty-state">Cargando agenda…</div>
       </div>
     </section>
 
-    <section class="panel updates-panel" id="novedades">
-      <div class="section-heading">
-        <div>
-          <span class="eyebrow">Últimos cambios</span>
-          <h2>Novedades</h2>
-        </div>
-      </div>
-      <div id="updatesList" class="updates-list" aria-live="polite">
-        <div class="empty-state">Cargando novedades…</div>
-      </div>
-    </section>
 
     <section class="panel money-panel" id="bote">
       <div class="section-heading">

@@ -4,7 +4,6 @@ window.CLASSROOM_CONFIG = {
     resumen: "Resumen",
     movimientos: "Movimientos",
     agenda: "Agenda",
-    novedades: "Novedades",
     compras: "Compras previstas"
   },
   fallback: {
@@ -21,17 +20,12 @@ window.CLASSROOM_CONFIG = {
       saldoComprometido: 44.60
     },
     agenda: [
-      {fecha:"19/10/2026",tipo:"Fecha límite",titulo:"Autorización · Castillo de Alcaudete",detalle:"Último día para responder la autorización.",importe:"",estado:"Pendiente",enlace:""},
-      {fecha:"19/10/2026",tipo:"Recordatorio",titulo:"Inicio de caligrafía",detalle:"Llevar «Letra a letra 1, cuadrícula», editorial Bruño, si aún falta.",importe:"",estado:"Pendiente",enlace:""},
-      {fecha:"19–23/10/2026",tipo:"Pago",titulo:"Dinero de excursión y tickets de Halloween",detalle:"La tutora ha indicado que deben llevarse durante esta semana.",importe:"",estado:"Pendiente",enlace:""},
-      {fecha:"22/10/2026",tipo:"Fecha límite",titulo:"Confirmar asistencia a Halloween",detalle:"Comunicar por Séneca si se asistirá y cuántas personas irán.",importe:"3 €",estado:"Pendiente",enlace:""},
-      {fecha:"26/10/2026",tipo:"Evento",titulo:"Halloween en el colegio",detalle:"De 16:45 a 19:00 aprox. Cuentacuentos, merienda y pasillo del terror.",importe:"3 €",estado:"Próximo",enlace:""},
-      {fecha:"Sin fecha",tipo:"Pago",titulo:"Bote común de clase",detalle:"Queda 1 familia pendiente de aportar al bote común.",importe:"5 €",estado:"Pendiente",enlace:""}
-    ],
-    novedades: [
-      {fecha:"16/10/2026",tipo:"Aviso",titulo:"Halloween en el colegio",detalle:"Ya están publicadas la fecha, horario, precio y fecha límite para confirmar asistencia.",destacarHasta:"22/10/2026",enlace:""},
-      {fecha:"16/10/2026",tipo:"Bote",titulo:"15 de 16 familias han aportado",detalle:"El bote cuenta actualmente con 75 € ingresados. Queda una familia pendiente.",destacarHasta:"20/10/2026",enlace:""},
-      {fecha:"16/10/2026",tipo:"Compra",titulo:"Bandejas apilables encargadas",detalle:"Se han encargado 16 bandejas a 1,90 € cada una. Coste previsto: 30,40 €.",destacarHasta:"23/10/2026",enlace:""}
+      {fecha:"19/10/2026",tipo:"Fecha límite",titulo:"Autorización · Castillo de Alcaudete",detalle:"Último día para responder la autorización.",importe:"",estado:"Pendiente",enlace:"",accion:"Firmar autorización en iPasen"},
+      {fecha:"19/10/2026",tipo:"Recordatorio",titulo:"Inicio de caligrafía",detalle:"Llevar «Letra a letra 1, cuadrícula», editorial Bruño, si aún falta.",importe:"",estado:"Pendiente",enlace:"",accion:"Llevar el libro de caligrafía"},
+      {fecha:"19–23/10/2026",tipo:"Pago",titulo:"Dinero de excursión y tickets de Halloween",detalle:"La tutora ha indicado que deben llevarse durante esta semana.",importe:"",estado:"Pendiente",enlace:"",accion:"Llevar el dinero esta semana"},
+      {fecha:"22/10/2026",tipo:"Fecha límite",titulo:"Confirmar asistencia a Halloween",detalle:"Comunicar por Séneca si se asistirá y cuántas personas irán.",importe:"3 €",estado:"Pendiente",enlace:"",accion:"Confirmar asistencia por Séneca"},
+      {fecha:"26/10/2026",tipo:"Evento",titulo:"Halloween en el colegio",detalle:"De 16:45 a 19:00 aprox. Cuentacuentos, merienda y pasillo del terror.",importe:"3 €",estado:"Próximo",enlace:"",accion:"Asistir al evento"},
+      {fecha:"Sin fecha",tipo:"Pago",titulo:"Bote común de clase",detalle:"Queda 1 familia pendiente de aportar al bote común.",importe:"5 €",estado:"Pendiente",enlace:"",accion:"Aportar 5 € al bote"}
     ],
     compras: [
       {fecha:"16/10/2026",concepto:"Bandejas apilables",unidades:16,precioUnidad:1.90,costeTotal:30.40,estado:"Encargada",observaciones:"Solicitadas por la tutora para el material individual del alumnado."}

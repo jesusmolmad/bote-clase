@@ -42,54 +42,64 @@
     if(t.includes("aviso"))return "🔔";
     return "📌";
   }
+  function dateParts(str){
+    const s=String(str||"").trim();
+    if(!s || /sin fecha/i.test(s)) return {kind:"none",label:"SIN FECHA"};
+    const range=s.match(/^(\d{1,2})[–-](\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(range){
+      return {kind:"range",label:`${range[1]}–${range[2]}`,month:new Intl.DateTimeFormat("es-ES",{month:"short"}).format(new Date(+range[4],+range[3]-1,1)).replace(".","").toUpperCase(),year:range[4]};
+    }
+    const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(m){
+      return {kind:"date",day:m[1],month:new Intl.DateTimeFormat("es-ES",{month:"short"}).format(new Date(+m[3],+m[2]-1,1)).replace(".","").toUpperCase(),year:m[3]};
+    }
+    return {kind:"text",label:s};
+  }
+  function sortAgenda(items){
+    return [...items].sort((a,b)=>{
+      const da=parseDate(a.fecha), db=parseDate(b.fecha);
+      if(da && db) return da-db;
+      if(da) return -1;
+      if(db) return 1;
+      return 0;
+    });
+  }
   function renderAgenda(items){
     const box=$("agendaList"); if(!box)return;
-    const visible=(items||[]).filter(i=>!["completado","cancelado"].includes(String(i.estado||"").toLowerCase()));
+    const visible=sortAgenda((items||[]).filter(i=>!["completado","cancelado"].includes(String(i.estado||"").toLowerCase())));
     if(!visible.length){box.innerHTML='<div class="empty-state">No hay fechas próximas registradas.</div>';return}
     box.innerHTML=visible.map(i=>{
       const cls=agendaClass(i.tipo);
+      const d=dateParts(i.fecha);
+      const dateMarkup = d.kind==="date"
+        ? `<span class="date-day">${escapeHtml(d.day)}</span><span class="date-month">${escapeHtml(d.month)}</span><span class="date-year">${escapeHtml(d.year)}</span>`
+        : d.kind==="range"
+        ? `<span class="date-range">${escapeHtml(d.label)}</span><span class="date-month">${escapeHtml(d.month)}</span><span class="date-year">${escapeHtml(d.year)}</span>`
+        : `<span class="date-range">${escapeHtml(d.label)}</span>`;
       const button=i.enlace&&/^https?:\/\//i.test(i.enlace)
         ? `<button class="action-button" type="button" data-open-url="${escapeAttr(i.enlace)}">Ver información</button>`:"";
+      const action=i.accion?`<div class="agenda-action"><span class="agenda-action__label">Lo importante</span><span class="agenda-action__text">${escapeHtml(i.accion)}</span></div>`:"";
       return `<article class="agenda-card agenda-card--${cls}">
-        <div class="agenda-card__stripe"></div>
+        <div class="agenda-datepanel">
+          ${dateMarkup}
+          <span class="when-badge">${relativeDateLabel(i.fecha)}</span>
+        </div>
         <div class="agenda-card__content">
-          <div class="agenda-card__head">
-            <div class="agenda-icon">${agendaIcon(i.tipo)}</div>
-            <div class="agenda-card__titles">
-              <span class="agenda-type">${escapeHtml(i.tipo||"Recordatorio")}</span>
-              <h3>${escapeHtml(i.titulo||"Recordatorio")}</h3>
-            </div>
-            <div class="agenda-datebox">
-              <strong>${escapeHtml(i.fecha||"Sin fecha")}</strong>
-              <span class="when-badge">${relativeDateLabel(i.fecha)}</span>
+          <div class="agenda-card__topline">
+            <div class="agenda-card__identity">
+              <div class="agenda-icon">${agendaIcon(i.tipo)}</div>
+              <div>
+                <span class="agenda-type">${escapeHtml(i.tipo||"Recordatorio")}</span>
+                <h3>${escapeHtml(i.titulo||"Recordatorio")}</h3>
+              </div>
             </div>
           </div>
           ${i.detalle?`<div class="agenda-card__body"><p>${escapeHtml(i.detalle)}</p></div>`:""}
-          ${(i.importe||button)?`<div class="agenda-card__footer">${i.importe?`<span class="agenda-amount">${escapeHtml(i.importe)}</span>`:"<span></span>"}${button}</div>`:""}
+          ${action}
+          ${(i.importe||button)?`<div class="agenda-card__footer">${i.importe?`<span class="agenda-amount">💶 ${escapeHtml(i.importe)}</span>`:"<span></span>"}${button}</div>`:""}
         </div>
       </article>`;
     }).join("");
-  }
-  function isNew(until){
-    const d=parseDate(until); if(!d)return false;
-    return dayStart(new Date())<=dayStart(d);
-  }
-  function updateIcon(tipo){
-    const t=String(tipo||"").toLowerCase();
-    if(t.includes("bote"))return "💶";
-    if(t.includes("compra"))return "🧾";
-    if(t.includes("excurs"))return "🚌";
-    if(t.includes("aviso"))return "🔔";
-    return "ℹ️";
-  }
-  function renderUpdates(items){
-    const box=$("updatesList");if(!box)return;
-    if(!items?.length){box.innerHTML='<div class="empty-state">No hay novedades recientes.</div>';return}
-    box.innerHTML=items.slice(0,6).map(i=>`<article class="update-item">
-      <div class="update-icon">${updateIcon(i.tipo)}</div>
-      <div><strong>${escapeHtml(i.titulo||"Actualización")}${isNew(i.destacarHasta)?'<span class="new-badge">NUEVO</span>':""}</strong>${i.detalle?`<p>${escapeHtml(i.detalle)}</p>`:""}</div>
-      <div class="update-meta">${escapeHtml(i.fecha||"")}</div>
-    </article>`).join("");
   }
   function renderSummary(s){
     setText("saldoActual",money.format(Number(s.saldoActual||0)));
@@ -168,12 +178,11 @@
     };
   }
   const rows=p=>(p.table?.rows||[]).filter(r=>r.c?.some(Boolean));
-  function extractAgenda(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",tipo:r.c?.[1]?.f??r.c?.[1]?.v??"",titulo:r.c?.[2]?.f??r.c?.[2]?.v??"",detalle:r.c?.[3]?.f??r.c?.[3]?.v??"",importe:r.c?.[4]?.f??r.c?.[4]?.v??"",estado:r.c?.[5]?.f??r.c?.[5]?.v??"",enlace:r.c?.[6]?.f??r.c?.[6]?.v??""})).filter(x=>x.titulo)}
-  function extractUpdates(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",tipo:r.c?.[1]?.f??r.c?.[1]?.v??"",titulo:r.c?.[2]?.f??r.c?.[2]?.v??"",detalle:r.c?.[3]?.f??r.c?.[3]?.v??"",destacarHasta:r.c?.[4]?.f??r.c?.[4]?.v??"",enlace:r.c?.[5]?.f??r.c?.[5]?.v??""})).filter(x=>x.titulo)}
+  function extractAgenda(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",tipo:r.c?.[1]?.f??r.c?.[1]?.v??"",titulo:r.c?.[2]?.f??r.c?.[2]?.v??"",detalle:r.c?.[3]?.f??r.c?.[3]?.v??"",importe:r.c?.[4]?.f??r.c?.[4]?.v??"",estado:r.c?.[5]?.f??r.c?.[5]?.v??"",enlace:r.c?.[6]?.f??r.c?.[6]?.v??"",accion:r.c?.[7]?.f??r.c?.[7]?.v??""})).filter(x=>x.titulo)})).filter(x=>x.titulo)}
   function extractPurchases(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",concepto:r.c?.[1]?.f??r.c?.[1]?.v??"",unidades:Number(r.c?.[2]?.v??0),precioUnidad:Number(r.c?.[3]?.v??0),costeTotal:Number(r.c?.[4]?.v??0),estado:r.c?.[5]?.f??r.c?.[5]?.v??"",observaciones:r.c?.[6]?.f??r.c?.[6]?.v??""})).filter(x=>x.concepto)}
   function extractMovements(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",concepto:r.c?.[1]?.f??r.c?.[1]?.v??"",tipo:r.c?.[2]?.f??r.c?.[2]?.v??"",importe:Number(r.c?.[3]?.v??0),observaciones:r.c?.[4]?.f??r.c?.[4]?.v??"",referencia:r.c?.[5]?.f??r.c?.[5]?.v??""})).filter(x=>x.concepto||x.importe)}
   function renderAll(data,connected){
-    renderSummary(data.summary);renderAgenda(data.agenda);renderUpdates(data.novedades);renderPurchases(data.compras);renderMovements(data.movimientos);renderReceipts(data.movimientos);
+    renderSummary(data.summary);renderAgenda(data.agenda);renderPurchases(data.compras);renderMovements(data.movimientos);renderReceipts(data.movimientos);
     const stamp=new Intl.DateTimeFormat("es-ES",{dateStyle:"short",timeStyle:"short"}).format(new Date());
     setText("lastSync",connected?`Datos sincronizados con Google Sheets: ${stamp}.`:`Mostrando datos de respaldo. Último intento: ${stamp}.`);
     setSync(connected?"ok":"error",connected?"Datos actualizados desde Google Sheets":"Mostrando datos de respaldo");
@@ -181,8 +190,8 @@
   async function load(){
     setSync("loading","Conectando con Google Sheets…");
     try{
-      const [s,m,a,n,c]=await Promise.all([gviz(cfg.sheets.resumen),gviz(cfg.sheets.movimientos),gviz(cfg.sheets.agenda),gviz(cfg.sheets.novedades),gviz(cfg.sheets.compras)]);
-      renderAll({summary:extractSummary(s),movimientos:extractMovements(m),agenda:extractAgenda(a),novedades:extractUpdates(n),compras:extractPurchases(c)},true);
+      const [s,m,a,c]=await Promise.all([gviz(cfg.sheets.resumen),gviz(cfg.sheets.movimientos),gviz(cfg.sheets.agenda),gviz(cfg.sheets.compras)]);
+      renderAll({summary:extractSummary(s),movimientos:extractMovements(m),agenda:extractAgenda(a),compras:extractPurchases(c)},true);
     }catch(e){console.warn(e);renderAll(cfg.fallback,false)}
   }
   document.addEventListener("click",e=>{
