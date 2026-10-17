@@ -105,3 +105,21 @@ No incluyas nombres de menores, familias, teléfonos u otros datos personales en
 - La fecha es el elemento visual más destacado.
 - La pestaña Agenda incorpora `Acción principal`, para resaltar exactamente qué hay que hacer: firmar, pagar, llevar material, confirmar asistencia, etc.
 - Los elementos sin fecha concreta aparecen al final.
+
+
+## Versión V6.2
+
+Se ha cambiado la carga de datos para evitar el parpadeo de la agenda:
+- La agenda permanece en `Cargando agenda…` hasta recibir Google Sheets.
+- Cada pestaña se carga de forma independiente.
+- Un fallo en Resumen, Movimientos o Compras ya no puede borrar la Agenda.
+- Si la Agenda no responde, se muestran los seis elementos de respaldo, no solo uno.
+
+## V7 · Caducidad visual de la agenda
+
+- Hasta su fecha final, el aviso mantiene su color habitual.
+- Durante los días 1, 2 y 3 posteriores a la fecha final se muestra en gris con el estado FINALIZADO.
+- A partir del cuarto día posterior desaparece automáticamente de la web, pero permanece guardado en Google Sheets.
+- Los intervalos (por ejemplo 19–23/10/2026) utilizan el último día como fecha final.
+- Los avisos sin fecha permanecen visibles hasta que se marquen como Completado o Cancelado.
+- El estado Completado/Cancelado oculta inmediatamente cualquier aviso.

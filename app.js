@@ -16,14 +16,34 @@
     return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]),12,0,0);
   }
   function dayStart(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate(),12,0,0)}
+  function agendaInterval(str){
+    const text=String(str||"").trim();
+    const range=text.match(/^(\d{1,2})[–-](\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(range){
+      const [,startDay,endDay,month,year]=range;
+      return {start:new Date(+year,+month-1,+startDay,12),end:new Date(+year,+month-1,+endDay,12)};
+    }
+    const single=parseDate(text);
+    return single?{start:single,end:single}:null;
+  }
+  function daysAfterEnd(str){
+    const interval=agendaInterval(str);
+    if(!interval)return null;
+    const today=dayStart(new Date());
+    const end=dayStart(interval.end);
+    return Math.round((today-end)/86400000);
+  }
   function relativeDateLabel(str){
-    const d=parseDate(str); if(!d)return "PENDIENTE";
+    const period=agendaInterval(str); if(!period)return "SIN FECHA";
+    const d=period.start;
+    const elapsed=daysAfterEnd(str);
+    if(elapsed>0)return elapsed===1?"FINALIZADO AYER":`FINALIZADO HACE ${elapsed} DÍAS`;
     const today=dayStart(new Date()); const target=dayStart(d);
     const diff=Math.round((target-today)/86400000);
     if(diff===0)return "HOY";
     if(diff===1)return "MAÑANA";
     if(diff>1 && diff<=7)return `EN ${diff} DÍAS`;
-    if(diff<0)return "FECHA PASADA";
+    if(diff<0)return "EN CURSO";
     return "PRÓXIMO";
   }
   function agendaClass(tipo){
@@ -57,7 +77,7 @@
   }
   function sortAgenda(items){
     return [...items].sort((a,b)=>{
-      const da=parseDate(a.fecha), db=parseDate(b.fecha);
+      const da=agendaInterval(a.fecha)?.start, db=agendaInterval(b.fecha)?.start;
       if(da && db) return da-db;
       if(da) return -1;
       if(db) return 1;
@@ -66,10 +86,15 @@
   }
   function renderAgenda(items){
     const box=$("agendaList"); if(!box)return;
-    const visible=sortAgenda((items||[]).filter(i=>!["completado","cancelado"].includes(String(i.estado||"").toLowerCase())));
+    const visible=sortAgenda((items||[]).filter(i=>{
+      if(["completado","cancelado"].includes(String(i.estado||"").toLowerCase()))return false;
+      const days=daysAfterEnd(i.fecha);
+      return days===null || days<=3;
+    }));
     if(!visible.length){box.innerHTML='<div class="empty-state">No hay fechas próximas registradas.</div>';return}
     box.innerHTML=visible.map(i=>{
-      const cls=agendaClass(i.tipo);
+      const overdue=daysAfterEnd(i.fecha)>0;
+      const cls=overdue?"expired":agendaClass(i.tipo);
       const d=dateParts(i.fecha);
       const dateMarkup = d.kind==="date"
         ? `<span class="date-day">${escapeHtml(d.day)}</span><span class="date-month">${escapeHtml(d.month)}</span><span class="date-year">${escapeHtml(d.year)}</span>`
@@ -181,19 +206,67 @@
   function extractAgenda(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",tipo:r.c?.[1]?.f??r.c?.[1]?.v??"",titulo:r.c?.[2]?.f??r.c?.[2]?.v??"",detalle:r.c?.[3]?.f??r.c?.[3]?.v??"",importe:r.c?.[4]?.f??r.c?.[4]?.v??"",estado:r.c?.[5]?.f??r.c?.[5]?.v??"",enlace:r.c?.[6]?.f??r.c?.[6]?.v??"",accion:r.c?.[7]?.f??r.c?.[7]?.v??""})).filter(x=>x.titulo)}
   function extractPurchases(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",concepto:r.c?.[1]?.f??r.c?.[1]?.v??"",unidades:Number(r.c?.[2]?.v??0),precioUnidad:Number(r.c?.[3]?.v??0),costeTotal:Number(r.c?.[4]?.v??0),estado:r.c?.[5]?.f??r.c?.[5]?.v??"",observaciones:r.c?.[6]?.f??r.c?.[6]?.v??""})).filter(x=>x.concepto)}
   function extractMovements(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",concepto:r.c?.[1]?.f??r.c?.[1]?.v??"",tipo:r.c?.[2]?.f??r.c?.[2]?.v??"",importe:Number(r.c?.[3]?.v??0),observaciones:r.c?.[4]?.f??r.c?.[4]?.v??"",referencia:r.c?.[5]?.f??r.c?.[5]?.v??""})).filter(x=>x.concepto||x.importe)}
-  function renderAll(data,connected){
-    renderSummary(data.summary);renderAgenda(data.agenda);renderPurchases(data.compras);renderMovements(data.movimientos);renderReceipts(data.movimientos);
-    const stamp=new Intl.DateTimeFormat("es-ES",{dateStyle:"short",timeStyle:"short"}).format(new Date());
-    setText("lastSync",connected?`Datos sincronizados con Google Sheets: ${stamp}.`:`Mostrando datos de respaldo. Último intento: ${stamp}.`);
-    setSync(connected?"ok":"error",connected?"Datos actualizados desde Google Sheets":"Mostrando datos de respaldo");
+  function stampText(){
+    return new Intl.DateTimeFormat("es-ES",{dateStyle:"short",timeStyle:"short"}).format(new Date());
   }
-  async function load(){
+
+  function renderBaseFallback(){
+    renderSummary(cfg.fallback.summary);
+    renderPurchases(cfg.fallback.compras);
+    renderMovements(cfg.fallback.movimientos);
+    renderReceipts(cfg.fallback.movimientos);
+    setText("lastSync","Conectando con Google Sheets…");
     setSync("loading","Conectando con Google Sheets…");
-    try{
-      const [s,m,a,c]=await Promise.all([gviz(cfg.sheets.resumen),gviz(cfg.sheets.movimientos),gviz(cfg.sheets.agenda),gviz(cfg.sheets.compras)]);
-      renderAll({summary:extractSummary(s),movimientos:extractMovements(m),agenda:extractAgenda(a),compras:extractPurchases(c)},true);
-    }catch(e){console.warn(e);renderAll(cfg.fallback,false)}
+    const agendaBox=$("agendaList");
+    if(agendaBox) agendaBox.innerHTML='<div class="empty-state">Cargando agenda…</div>';
   }
+
+  async function loadAgenda(){
+    const payload=await gviz(cfg.sheets.agenda);
+    const items=extractAgenda(payload);
+    if(!items.length) throw new Error("Agenda vacía");
+    renderAgenda(items);
+    return items.length;
+  }
+
+  async function load(){
+    setSync("loading","Actualizando datos…");
+    const agendaPromise=loadAgenda();
+
+    const [summaryResult,movementsResult,purchasesResult,agendaResult]=await Promise.allSettled([
+      gviz(cfg.sheets.resumen),
+      gviz(cfg.sheets.movimientos),
+      gviz(cfg.sheets.compras),
+      agendaPromise
+    ]);
+
+    if(summaryResult.status==="fulfilled"){
+      renderSummary(extractSummary(summaryResult.value));
+    }
+
+    let currentMovements=cfg.fallback.movimientos;
+    if(movementsResult.status==="fulfilled"){
+      const m=extractMovements(movementsResult.value);
+      if(m.length) currentMovements=m;
+    }
+    renderMovements(currentMovements);
+    renderReceipts(currentMovements);
+
+    if(purchasesResult.status==="fulfilled"){
+      const c=extractPurchases(purchasesResult.value);
+      renderPurchases(c.length?c:cfg.fallback.compras);
+    }
+
+    if(agendaResult.status==="rejected"){
+      console.warn("No se pudo cargar Agenda desde Google Sheets:",agendaResult.reason);
+      renderAgenda(cfg.fallback.agenda);
+    }
+
+    const anyFailed=[summaryResult,movementsResult,purchasesResult,agendaResult].some(r=>r.status==="rejected");
+    setText("lastSync",`${anyFailed?"Actualización parcial":"Datos sincronizados"}: ${stampText()}.`);
+    setSync(anyFailed?"error":"ok",anyFailed?"Algunos datos usan copia de respaldo":"Datos actualizados desde Google Sheets");
+  }
+
   document.addEventListener("click",e=>{
     const scrollBtn=e.target.closest("[data-scroll]");
     if(scrollBtn){
@@ -207,5 +280,7 @@
     }
   });
   $("refreshButton")?.addEventListener("click",load);
-  renderAll(cfg.fallback,false);load();
+
+  renderBaseFallback();
+  load();
 })();

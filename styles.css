@@ -87,3 +87,13 @@ footer{text-align:center;color:var(--muted);font-size:.74rem;line-height:1.5;pad
 
 .money-note{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:13px 14px;border-radius:16px;background:var(--aqua-soft);border:1px solid #dceff1}
 .money-note span{font-size:1rem}.money-note p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.45}
+
+/* Eventos finalizados: tres dias en escala de grises antes de ocultarse. */
+.agenda-card--expired{--accent:#858991;--soft:#f1f2f3;background:#f7f7f8;border-color:#d9dce0;box-shadow:none}
+.agenda-card--expired .agenda-datepanel{background:#e9eaec}
+.agenda-card--expired .agenda-icon{background:#e9eaec;filter:grayscale(1)}
+.agenda-card--expired .agenda-card__content{opacity:.82}
+.agenda-card--expired .agenda-action{background:#eceef0}
+.agenda-card--expired .agenda-amount{background:#e7e8eb;color:#666a72}
+.agenda-card--expired .when-badge{color:#60646d;background:#e1e3e6;border-color:#d2d5d9}
+.agenda-card--expired .action-button{background:#777c84}
