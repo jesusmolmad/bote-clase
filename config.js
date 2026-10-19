@@ -4,6 +4,7 @@ window.CLASSROOM_CONFIG = {
     resumen: "Resumen",
     movimientos: "Movimientos",
     agenda: "Agenda",
+    tareas: "Tareas para casa",
     compras: "Compras previstas"
   },
   fallback: {
@@ -19,6 +20,11 @@ window.CLASSROOM_CONFIG = {
       totalCompromisos: 30.40,
       saldoComprometido: 44.60
     },
+    tareas: [
+      {fecha:"19/10/2026",tarea:"Caligrafía",detalle:"Hacer la hoja de caligrafía que lleva la fecha.",destinatarios:"Toda la clase",estado:"Pendiente",enlace:""},
+      {fecha:"19/10/2026",tarea:"Lectura",detalle:"Realizar la lectura indicada por la tutora.",destinatarios:"Toda la clase",estado:"Pendiente",enlace:""},
+      {fecha:"19/10/2026",tarea:"Lengua · letra Y",detalle:"Terminar únicamente las hojas de la letra Y.",destinatarios:"Solo quien lleve el libro de Lengua a casa sin terminar",estado:"Pendiente",enlace:""}
+    ],
     agenda: [
       {fecha:"19/10/2026",tipo:"Fecha límite",titulo:"Autorización · Castillo de Alcaudete",detalle:"Último día para responder la autorización.",importe:"",estado:"Pendiente",enlace:"",accion:"Firmar autorización en iPasen"},
       {fecha:"19/10/2026",tipo:"Recordatorio",titulo:"Inicio de caligrafía",detalle:"Llevar «Letra a letra 1, cuadrícula», editorial Bruño, si aún falta.",importe:"",estado:"Pendiente",enlace:"",accion:"Llevar el libro de caligrafía"},

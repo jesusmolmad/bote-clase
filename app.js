@@ -206,6 +206,26 @@
   function extractAgenda(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",tipo:r.c?.[1]?.f??r.c?.[1]?.v??"",titulo:r.c?.[2]?.f??r.c?.[2]?.v??"",detalle:r.c?.[3]?.f??r.c?.[3]?.v??"",importe:r.c?.[4]?.f??r.c?.[4]?.v??"",estado:r.c?.[5]?.f??r.c?.[5]?.v??"",enlace:r.c?.[6]?.f??r.c?.[6]?.v??"",accion:r.c?.[7]?.f??r.c?.[7]?.v??""})).filter(x=>x.titulo)}
   function extractPurchases(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",concepto:r.c?.[1]?.f??r.c?.[1]?.v??"",unidades:Number(r.c?.[2]?.v??0),precioUnidad:Number(r.c?.[3]?.v??0),costeTotal:Number(r.c?.[4]?.v??0),estado:r.c?.[5]?.f??r.c?.[5]?.v??"",observaciones:r.c?.[6]?.f??r.c?.[6]?.v??""})).filter(x=>x.concepto)}
   function extractMovements(p){return rows(p).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",concepto:r.c?.[1]?.f??r.c?.[1]?.v??"",tipo:r.c?.[2]?.f??r.c?.[2]?.v??"",importe:Number(r.c?.[3]?.v??0),observaciones:r.c?.[4]?.f??r.c?.[4]?.v??"",referencia:r.c?.[5]?.f??r.c?.[5]?.v??""})).filter(x=>x.concepto||x.importe)}
+  function extractTasks(payload){
+    return rows(payload).map(r=>({fecha:r.c?.[0]?.f??r.c?.[0]?.v??"",tarea:r.c?.[1]?.f??r.c?.[1]?.v??"",detalle:r.c?.[2]?.f??r.c?.[2]?.v??"",destinatarios:r.c?.[3]?.f??r.c?.[3]?.v??"",estado:r.c?.[4]?.f??r.c?.[4]?.v??"",enlace:r.c?.[5]?.f??r.c?.[5]?.v??""})).filter(t=>t.tarea);
+  }
+  function renderTasks(items){
+    const box=$("tasksList");if(!box)return;
+    const today=new Date();today.setHours(12,0,0,0);
+    const active=(items||[]).filter(x=>{
+      if(["completado","cancelado"].includes(String(x.estado||"").toLowerCase()))return false;
+      const d=parseDate(x.fecha);return !d || (today-d)/86400000<=3;
+    }).sort((a,b)=>(parseDate(b.fecha)?.getTime()||0)-(parseDate(a.fecha)?.getTime()||0));
+    if(!active.length){box.innerHTML='<div class="empty-state">No hay tareas recientes pendientes.</div>';return}
+    let prior="";
+    box.innerHTML=active.map(x=>{
+      const date=String(x.fecha||"Sin fecha");const header=date!==prior?`<h3 class="task-date">📅 ${escapeHtml(date)}</h3>`:"";prior=date;
+      const special=/solo/i.test(String(x.destinatarios||""));
+      const link=/^https?:\/\//i.test(String(x.enlace||""))?`<button class="task-button" type="button" data-open-url="${escapeAttr(x.enlace)}">Ver documento</button>`:"";
+      return `${header}<article class="task-item ${special?"task-item--conditional":""}"><span class="task-icon">${special?"📖":"✏️"}</span><div><span class="task-tag">${special?"SOLO ALGUNOS ALUMNOS":"TODA LA CLASE"}</span><h4>${escapeHtml(x.tarea)}</h4><p>${escapeHtml(x.detalle)}</p>${special?`<small>${escapeHtml(x.destinatarios)}</small>`:""}${link}</div></article>`;
+    }).join("");
+  }
+
   function stampText(){
     return new Intl.DateTimeFormat("es-ES",{dateStyle:"short",timeStyle:"short"}).format(new Date());
   }
@@ -217,6 +237,7 @@
     renderReceipts(cfg.fallback.movimientos);
     setText("lastSync","Conectando con Google Sheets…");
     setSync("loading","Conectando con Google Sheets…");
+    const taskBox=$("tasksList");if(taskBox)taskBox.innerHTML='<div class="empty-state">Cargando tareas…</div>';
     const agendaBox=$("agendaList");
     if(agendaBox) agendaBox.innerHTML='<div class="empty-state">Cargando agenda…</div>';
   }
@@ -232,12 +253,14 @@
   async function load(){
     setSync("loading","Actualizando datos…");
     const agendaPromise=loadAgenda();
+    const taskPromise=gviz(cfg.sheets.tareas);
 
-    const [summaryResult,movementsResult,purchasesResult,agendaResult]=await Promise.allSettled([
+    const [summaryResult,movementsResult,purchasesResult,agendaResult,taskResult]=await Promise.allSettled([
       gviz(cfg.sheets.resumen),
       gviz(cfg.sheets.movimientos),
       gviz(cfg.sheets.compras),
-      agendaPromise
+      agendaPromise,
+      taskPromise
     ]);
 
     if(summaryResult.status==="fulfilled"){
@@ -262,7 +285,9 @@
       renderAgenda(cfg.fallback.agenda);
     }
 
-    const anyFailed=[summaryResult,movementsResult,purchasesResult,agendaResult].some(r=>r.status==="rejected");
+    if(taskResult.status==="fulfilled")renderTasks(extractTasks(taskResult.value));
+    else{console.warn("No se pudieron cargar las tareas",taskResult.reason);renderTasks(cfg.fallback.tareas)}
+    const anyFailed=[summaryResult,movementsResult,purchasesResult,agendaResult,taskResult].some(r=>r.status==="rejected");
     setText("lastSync",`${anyFailed?"Actualización parcial":"Datos sincronizados"}: ${stampText()}.`);
     setSync(anyFailed?"error":"ok",anyFailed?"Algunos datos usan copia de respaldo":"Datos actualizados desde Google Sheets");
   }

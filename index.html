@@ -22,6 +22,7 @@
       </div>
 
       <nav class="quick-nav" aria-label="Accesos rápidos">
+        <button type="button" data-scroll="tareas"><span>📚</span>Tareas</button>
         <button type="button" data-scroll="agenda"><span>📅</span>Agenda</button>
         <button type="button" data-scroll="bote"><span>💶</span>Bote</button>
         <button type="button" data-scroll="compras"><span>🧾</span>Compras</button>
@@ -33,6 +34,12 @@
         <button id="refreshButton" class="refresh-button" type="button">Actualizar</button>
       </div>
     </header>
+
+    <section class="panel tasks-panel" id="tareas">
+      <div class="section-heading"><div><span class="eyebrow">Después de clase</span><h2>Tareas para casa</h2></div></div>
+      <p class="section-copy">Indicaciones para casa. Las tareas solo para parte del alumnado aparecen diferenciadas.</p>
+      <div id="tasksList" class="tasks-list" aria-live="polite"><div class="empty-state">Cargando tareas…</div></div>
+    </section>
 
     <section class="panel agenda-panel" id="agenda">
       <div class="section-heading">

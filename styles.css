@@ -97,3 +97,17 @@ footer{text-align:center;color:var(--muted);font-size:.74rem;line-height:1.5;pad
 .agenda-card--expired .agenda-amount{background:#e7e8eb;color:#666a72}
 .agenda-card--expired .when-badge{color:#60646d;background:#e1e3e6;border-color:#d2d5d9}
 .agenda-card--expired .action-button{background:#777c84}
+
+.tasks-panel{border-top:5px solid var(--aqua-deep)}
+.tasks-list{display:grid;gap:10px}
+.task-date{font-size:.98rem;font-weight:900;color:var(--blue-deep);margin:8px 0 2px}
+.task-item{display:grid;grid-template-columns:45px 1fr;gap:12px;padding:15px;border:1px solid #d6eaed;border-radius:18px;background:var(--aqua-soft)}
+.task-item--conditional{background:var(--cream);border-color:#f1e4bf}
+.task-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:#fff;font-size:1.25rem}
+.task-item h4{margin:5px 0;font-size:1rem;color:var(--blue-deep)}
+.task-item p{margin:0;font-size:.85rem;line-height:1.5;color:var(--ink)}
+.task-item small{display:block;margin-top:7px;color:var(--gold-deep);font-weight:800}
+.task-tag{font-size:.68rem;letter-spacing:.04em;font-weight:900;color:var(--aqua-deep)}
+.task-item--conditional .task-tag{color:var(--gold-deep)}
+.task-button{display:inline-flex;border:0;border-radius:99px;background:var(--blue);color:#fff;font-weight:900;margin-top:10px;padding:9px 12px;cursor:pointer}
+@media(max-width:420px){.task-item{grid-template-columns:32px 1fr;gap:10px;padding:12px}.task-icon{width:32px;height:32px}}

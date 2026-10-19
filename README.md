@@ -123,3 +123,9 @@ Se ha cambiado la carga de datos para evitar el parpadeo de la agenda:
 - Los intervalos (por ejemplo 19–23/10/2026) utilizan el último día como fecha final.
 - Los avisos sin fecha permanecen visibles hasta que se marquen como Completado o Cancelado.
 - El estado Completado/Cancelado oculta inmediatamente cualquier aviso.
+
+## V8 · Tareas para casa
+
+Sección previa a la agenda alimentada desde la pestaña **Tareas para casa** de Google Sheets. Columnas: Fecha, Tarea, Detalle, Quién debe hacerla, Estado, Enlace y Observaciones.
+
+Las tareas más recientes aparecen primero. Pasados tres días después de su fecha, se ocultan automáticamente. Las tareas sin fecha permanecen hasta marcarlas como Completado o Cancelado.
